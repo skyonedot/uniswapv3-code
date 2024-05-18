@@ -2,6 +2,7 @@
 pragma solidity >=0.5.0;
 
 import './BitMath.sol';
+import "forge-std/console2.sol";
 
 /// @title Packed tick initialized state library
 /// @notice Stores a packed mapping of tick index to its initialized state
@@ -14,6 +15,7 @@ library TickBitmap {
     function position(int24 tick) private pure returns (int16 wordPos, uint8 bitPos) {
         wordPos = int16(tick >> 8);
         bitPos = uint8(uint24(tick % 256));
+        // console2.log("A");
     }
 
     /// @notice Flips the initialized state for a given tick from false to true, or vice versa

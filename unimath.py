@@ -44,9 +44,12 @@ def calc_amount1(liq, pa, pb):
 
 
 # Liquidity provision
-price_low = 4545
-price_cur = 5000
-price_upp = 5500
+# price_low = 4545
+# price_cur = 5000
+# price_upp = 5500
+price_low = 5100
+price_cur = 5300
+price_upp = 6000
 
 print(f"Price range: {price_low}-{price_upp}; current price: {price_cur}")
 

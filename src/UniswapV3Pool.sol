@@ -11,6 +11,7 @@ import "./lib/SwapMath.sol";
 import "./lib/Tick.sol";
 import "./lib/TickBitmap.sol";
 import "./lib/TickMath.sol";
+import "forge-std/console2.sol";
 
 contract UniswapV3Pool {
     using Tick for mapping(int24 => Tick.Info);
@@ -172,6 +173,7 @@ contract UniswapV3Pool {
             amount1
         );
     }
+    event checkPoint(int24 tick);
 
     function swap(
         address recipient,
@@ -198,6 +200,11 @@ contract UniswapV3Pool {
                 1,
                 zeroForOne
             );
+            console2.log('In Swap');
+            console2.logInt(state.tick);
+            console2.logInt(step.nextTick);
+
+            
 
             step.sqrtPriceNextX96 = TickMath.getSqrtRatioAtTick(step.nextTick);
 
@@ -212,6 +219,10 @@ contract UniswapV3Pool {
             state.amountSpecifiedRemaining -= step.amountIn;
             state.amountCalculated += step.amountOut;
             state.tick = TickMath.getTickAtSqrtRatio(state.sqrtPriceX96);
+            console2.logInt(state.tick);
+            console2.log("Reaming",state.amountSpecifiedRemaining, "Calculated", state.amountCalculated);
+            console2.log('In Swap End');
+
         }
 
         if (state.tick != slot0_.tick) {
