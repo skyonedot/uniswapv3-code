@@ -58,7 +58,7 @@ sqrtp_cur = price_to_sqrtp(price_cur)
 sqrtp_upp = price_to_sqrtp(price_upp)
 
 amount_eth = 1 * eth
-amount_usdc = 5000 * eth
+amount_usdc = 5300 * eth
 
 liq0 = liquidity0(amount_eth, sqrtp_cur, sqrtp_upp)
 liq1 = liquidity1(amount_usdc, sqrtp_cur, sqrtp_low)

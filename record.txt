@@ -1,0 +1,5 @@
+https://stackoverflow.com/questions/74555451/uniswap-v3-what-does-price-mean-at-a-given-tick
+
+https://zhuanlan.zhihu.com/p/448382469
+
+mint两次， 是两个不同的pool， 地址不一样
