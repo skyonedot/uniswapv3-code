@@ -14,6 +14,7 @@ import "./lib/SwapMath.sol";
 import "./lib/Tick.sol";
 import "./lib/TickBitmap.sol";
 import "./lib/TickMath.sol";
+import "forge-std/console2.sol";
 
 contract UniswapV3Pool is IUniswapV3Pool {
     using Tick for mapping(int24 => Tick.Info);
@@ -218,18 +219,24 @@ contract UniswapV3Pool is IUniswapV3Pool {
             state.amountSpecifiedRemaining > 0 &&
             state.sqrtPriceX96 != sqrtPriceLimitX96
         ) {
+            console2.log("Start Swap Loop");
+            console2.log("State.amountSpecifiedRemaining", state.amountSpecifiedRemaining);
+            console2.log("State.amountCalculated", state.amountCalculated);
             StepState memory step;
 
             step.sqrtPriceStartX96 = state.sqrtPriceX96;
+            console2.log("State.sqrtPriceX96", state.sqrtPriceX96);
 
             (step.nextTick, step.initialized) = tickBitmap.nextInitializedTickWithinOneWord(
                 state.tick,
                 1,
                 zeroForOne
             );
+            console2.logInt(state.tick);
+            console2.logInt(step.nextTick);
 
             step.sqrtPriceNextX96 = TickMath.getSqrtRatioAtTick(step.nextTick);
-
+            console2.log("Step.sqrtPriceNextX96", step.sqrtPriceNextX96);
             (state.sqrtPriceX96, step.amountIn, step.amountOut) = SwapMath
                 .computeSwapStep(
                     state.sqrtPriceX96,
@@ -243,11 +250,16 @@ contract UniswapV3Pool is IUniswapV3Pool {
                     state.liquidity,
                     state.amountSpecifiedRemaining
                 );
-
+            console2.log("State.sqrtPriceX96", state.sqrtPriceX96);
+            console2.log("Step.amountIn", step.amountIn);
+            console2.log("Step.amountOut", step.amountOut);
             state.amountSpecifiedRemaining -= step.amountIn;
             state.amountCalculated += step.amountOut;
+            console2.log("State.amountSpecifiedRemaining", state.amountSpecifiedRemaining);
+            console2.log("State.amountCalculated", state.amountCalculated);
 
             if (state.sqrtPriceX96 == step.sqrtPriceNextX96) {
+                console2.log("It is equal");
                 if (step.initialized) {
                     int128 liquidityDelta = ticks.cross(step.nextTick);
 
@@ -263,9 +275,13 @@ contract UniswapV3Pool is IUniswapV3Pool {
 
                 state.tick = zeroForOne ? step.nextTick - 1 : step.nextTick;
             } else if (state.sqrtPriceX96 != step.sqrtPriceStartX96) {
+                console2.log("it is not equal");
                 state.tick = TickMath.getTickAtSqrtRatio(state.sqrtPriceX96);
             }
+            console2.logInt(state.tick);
+            console2.log("End Swap Loop\n");
         }
+        console2.log(state.sqrtPriceX96 != sqrtPriceLimitX96);
 
         if (state.tick != slot0_.tick) {
             (slot0.sqrtPriceX96, slot0.tick) = (state.sqrtPriceX96, state.tick);
